@@ -132,19 +132,18 @@ async def gif(ctx, *, query):
 
     api_response = api_instance.gifs_search_get(GIPHY_KEY, query, limit = 5, rating = 'g')
     lst = list(api_response.data)
-    giff = random.choice(lst)
+    try:
+        giff = random.choice(lst)
+    except:
+        await ctx.send("There doesn't seem to be a gif stored in giphy, please try again with a different input!")
+        return
 
     emb = discord.Embed(title = query)
     #the link needs to be hardcoded but the id is based on the api search
     emb.set_image(url=f'https://media.giphy.com/media/{giff.id}/giphy.gif')
 
     await ctx.send(embed=emb)
-
-# Error handling for the gif command
-    @gif.error
-    async def gif_error(self, ctx, error):
-        if isinstance(error, IndexError):
-            await ctx.send("There doesn't seem to be a gif stored in giphy, please try again with a different input!")
+        
         
 # #snip snip for funzies 
 @bot.listen()
