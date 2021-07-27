@@ -36,7 +36,7 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 # Name of the text channel where bot notifications and other testing will take place
 bot_channel = 'robot-stuff'
 
-#prints into the terminal every member of the guild,
+# prints into the terminal every member of the guild,
 # the guild id, and the guild name, as well as the bot name
 @bot.event
 async def on_ready():
