@@ -140,6 +140,12 @@ async def gif(ctx, *, query):
 
     await ctx.send(embed=emb)
 
+# Error handling for the gif command
+    @gif.error
+    async def gif_error(self, ctx, error):
+        if isinstance(error, IndexError):
+            await ctx.send("There doesn't seem to be a gif stored in giphy, please try again with a different input!")
+        
 # #snip snip for funzies 
 @bot.listen()
 async def on_message(message):
