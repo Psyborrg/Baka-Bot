@@ -41,11 +41,10 @@ bot_channel = 'robot-stuff'
 @bot.event
 async def on_ready():
 
+    print(f'{bot.user} is connected to the following guilds:')
+
     for guild in bot.guilds:
-        print(
-        f'{bot.user} is connected to the following guild:\n'
-        f'{guild.name}(id: {guild.id})'
-        )
+        print(f'{guild.name}(id: {guild.id})')
         # Get the bot text channel if it exists, otherwise make it
         channel = discord.utils.get(guild.channels, name=f"{bot_channel}")
         if channel is None:
