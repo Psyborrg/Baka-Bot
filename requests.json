@@ -1,4 +1,16 @@
 {
-    "requests": [],
-    "dms": []
+    "requests": [
+        {
+            "author": "Psyborrg#2704",
+            "message": "testing request",
+            "time_sent": "Wed Sep 15 18:39:00 2021"
+        }
+    ],
+    "dms": [
+        {
+            "author": "Psyborrg#2704",
+            "message": "this is a test",
+            "time_sent": "Wed Sep 15 18:38:43 2021"
+        }
+    ]
 }

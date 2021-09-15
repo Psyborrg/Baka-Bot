@@ -268,22 +268,9 @@ movespeed: {stats.movespeed}"""
         resource_table = resource.find_all('a')
         resource_name = resource_table[1].get("title")
 
-        # Determine what resource the champ uses
-        secondary_resources = soup.find_all(class_="pi-faux-label")
-        secondary_resource = secondary_resources[3]
-        secondary_resource_table = secondary_resource.find_all('a')
-        secondary_resource_name = secondary_resource_table[1].string
-
-        #SEEMS TO WORK FOR ENERGY, NOT SURE ABOUT OTHER TYPES
-        # get all the divs for stat blocks
-        divs = soup.find_all(class_="pi-smart-data-value pi-data-value pi-font pi-item-spacing")
-        # The fourth div, index[3] is for resource regen, so get the text and split at ')' to get the value
-        resource_regen = divs[3].get_text().split(")")
-        resource_regen_title = resource_regen[0]
-        try:
-            resource_regen_value = resource_regen[1].strip()
-        except:
-            pass
+        # Determine what regen happens/ or secondary resource
+        secondary_resource = resources[3]
+        secondary_resource_name = secondary_resource.get_text().strip()
         
         emb = discord.Embed(description=f"Displaying {champion}'s info")
 
@@ -304,7 +291,7 @@ movespeed: {stats.movespeed}"""
             # If the resource is found to be "Manaless" do this
             elif stat == f"ResourceRegen_{champion}" and resource_name == "Manaless":
                 # Check if they are a fury champion, if so act accordingly
-                if resource_regen_title == ' Secondary Bar  Fury (100':
+                if soup.find(attrs={"data-tip": "Fury"}).get_text().strip() == "Fury":
                     value = 'Fury (100)'
                 # If not, do the standard manaless action
                 else:
@@ -313,18 +300,17 @@ movespeed: {stats.movespeed}"""
                 emb.add_field(name=f"`   {secondary_resource_name}   `", value=f"**{value} {value_lvl}**", inline=False)
             # If they are an energy champion, do this. uses the energy value finder from above
             elif stat == f"ResourceRegen_{champion}" and resource_name == "Energy":
-                value = soup.find(title="Energy").string
-                value = resource_regen_value
+                # value = soup.find(title="Energy").string
+                value = soup.find(attrs={"data-source": "resource regen"}).get_text().strip().replace(f"{secondary_resource_name}", "")
                 emb.add_field(name=f"`   {secondary_resource_name}   `", value=f"**{value} {value_lvl}**", inline=False)
+            
             # Attack speed is formatted differently, so its separate process goes here
             elif stat == f"AttackSpeed_{champion}":
-                # Get all the divs to find the as div
-                divs = soup.find_all(class_="pi-smart-data-value pi-data-value pi-font pi-item-spacing")
-                attackspeed_div = divs[10] #10 is the index of these divs for the attack speed stat
-                attackspeed_title = attackspeed_div.find('a').string #get the name of the stat, in this case: Base AS
-                value = attackspeed_div.get_text().replace(f'{attackspeed_title}', '') # Remove the name of the stat from the value text
+                value = soup.find(attrs={"data-source": "attack speed"}).get_text().replace("Base AS", "")
+                # attackspeed_title = "Base AS" #get the name of the stat, in this case: Base AS
                 value_lvl = soup.find(id=f"AttackSpeedBonus_{champion}_lvl").string #Grab the per level increase, different format from the rest
                 emb.add_field(name=f"`   {stat.split('_')[0]}   `", value=f"**{value} {value_lvl}%**", inline=False)
+            
             else:
                 emb.add_field(name=f"`   {stat.split('_')[0]}   `", value=f"**{value} {value_lvl}**", inline=False)
 
@@ -408,9 +394,11 @@ movespeed: {stats.movespeed}"""
                 last_type = "" #Holder var
                 last_text = "" #Holder var
                 for index, paragraph in enumerate(ability_paragraphs):
+                    # print(paragraph)
+                    
                     try:
                         #Try to find the ability type, ie active vs innate
-                        ability_type = paragraph.find(style="font-weight:bold; font-size:89%; text-transform:uppercase;").get_text()
+                        ability_type = paragraph.find(class_="template_sbc").get_text()
                     except:
                         pass
 

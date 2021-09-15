@@ -1,5 +1,6 @@
 import os
 import discord
+from discord.ext.commands.core import command
 from dotenv import load_dotenv
 from discord.ext import commands
 import random
@@ -36,15 +37,16 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 # Name of the text channel where bot notifications and other testing will take place
 bot_channel = 'robot-stuff'
 
-# prints into the terminal every member of the guild,
+#prints into the terminal every member of the guild,
 # the guild id, and the guild name, as well as the bot name
 @bot.event
 async def on_ready():
 
-    print(f'{bot.user} is connected to the following guilds:')
-
     for guild in bot.guilds:
-        print(f'{guild.name}(id: {guild.id})')
+        print(
+        f'{bot.user} is connected to the following guild:\n'
+        f'{guild.name}(id: {guild.id})'
+        )
         # Get the bot text channel if it exists, otherwise make it
         channel = discord.utils.get(guild.channels, name=f"{bot_channel}")
         if channel is None:
@@ -132,19 +134,14 @@ async def gif(ctx, *, query):
 
     api_response = api_instance.gifs_search_get(GIPHY_KEY, query, limit = 5, rating = 'g')
     lst = list(api_response.data)
-    try:
-        giff = random.choice(lst)
-    except:
-        await ctx.send("There doesn't seem to be a gif stored in giphy, please try again with a different input!")
-        return
+    giff = random.choice(lst)
 
     emb = discord.Embed(title = query)
     #the link needs to be hardcoded but the id is based on the api search
     emb.set_image(url=f'https://media.giphy.com/media/{giff.id}/giphy.gif')
 
     await ctx.send(embed=emb)
-        
-        
+
 # #snip snip for funzies 
 @bot.listen()
 async def on_message(message):
