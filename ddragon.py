@@ -1,8 +1,10 @@
+from asyncio.windows_events import NULL
 import random
 import enum
 import requests
 from requests.exceptions import HTTPError
 from bs4 import BeautifulSoup
+from selenium import webdriver
 import json
 from cassiopeia.data import Rank
 import discord
@@ -33,36 +35,36 @@ class League(commands.Cog, description="Commands related to the game League of L
 
     # THIS SECTION COVERS THE ACCOUNT/SUMMONER SPECIFIC COMMANDS
 
-    @commands.command(name='mastery7', help='prints a list of champions that the input summoner has mastery 7 on')
-    async def mastery7(self, ctx, *, summoner_name):
+#     @commands.command(name='mastery7', help='prints a list of champions that the input summoner has mastery 7 on')
+#     async def mastery7(self, ctx, *, summoner_name):
         
-        summoner = cass.get_summoner(name=summoner_name)
-        good_with = summoner.champion_masteries.filter(lambda cm: cm.level ==7)
+#         summoner = cass.get_summoner(name=summoner_name)
+#         good_with = summoner.champion_masteries.filter(lambda cm: cm.level ==7)
 
-        mastery7 = []
+#         mastery7 = []
         
-        for cm in good_with:
-            mastery7.append(cm.champion.name)
+#         for cm in good_with:
+#             mastery7.append(cm.champion.name)
         
-        await ctx.send(f'{summoner.name} has mastery 7 with these champions: {mastery7}')
+#         await ctx.send(f'{summoner.name} has mastery 7 with these champions: {mastery7}')
 
 
-    @commands.command(name='rank', help='Displays the rank of the input summoner in both solo/duo and flex queue')
-    async def rank(self, ctx, *, summoner_name):
+#     @commands.command(name='rank', help='Displays the rank of the input summoner in both solo/duo and flex queue')
+#     async def rank(self, ctx, *, summoner_name):
 
-        summoner = cass.get_summoner(name=summoner_name)
-        rank_dict = summoner.ranks
+#         summoner = cass.get_summoner(name=summoner_name)
+#         rank_dict = summoner.ranks
 
-        for queue, rank in rank_dict.items():
+#         for queue, rank in rank_dict.items():
 
-            if queue == cass.Queue.ranked_solo_fives:
+#             if queue == cass.Queue.ranked_solo_fives:
                 
-                await ctx.send(f'{summoner.name} is {rank} in solo-q')
+#                 await ctx.send(f'{summoner.name} is {rank} in solo-q')
                 
-                if rank.tier == cass.data.Tier.gold:
-                    await ctx.send(f'cmon {summoner_name}, you can do better than that')
-            else:
-                await ctx.send(f'{summoner.name} is {rank} in flex')
+#                 if rank.tier == cass.data.Tier.gold:
+#                     await ctx.send(f'cmon {summoner_name}, you can do better than that')
+#             else:
+#                 await ctx.send(f'{summoner.name} is {rank} in flex')
 
 
 
@@ -73,65 +75,65 @@ class League(commands.Cog, description="Commands related to the game League of L
 
 
 
-    # THIS SECTION COVERS THE CHAMPION SPECIFIC COMMANDS
+#     # THIS SECTION COVERS THE CHAMPION SPECIFIC COMMANDS
 
-    @commands.command(name='stats', help='Displays the stats of the given champion')
-    async def stats(self, ctx, *, champion_name):
+#     @commands.command(name='stats', help='Displays the stats of the given champion')
+#     async def stats(self, ctx, *, champion_name):
 
-        champion = cass.get_champion(f'{champion_name}')
-        stats = champion.stats
+#         champion = cass.get_champion(f'{champion_name}')
+#         stats = champion.stats
 
-        emb = discord.Embed(title = f"{champion.name}", description=f"Displaying {champion.name}'s base stats")
-        # Weird formatting because of multiline string, dont worry about it
-        response = f"""
-armor: {stats.armor}
-armor per level: {stats.armor_per_level}
-attack_damage: {stats.attack_damage}
-attack_damage_per_level: {stats.attack_damage_per_level}
-attack_range: {stats.attack_range}
-attack_speed: {stats.attack_speed}
-percent_attack_speed_per_level: {stats.percent_attack_speed_per_level}
-critical_strike_chance: {stats.critical_strike_chance}
-critical_strike_chance_per_level: {stats.critical_strike_chance_per_level}
-health: {stats.health}
-health_per_level: {stats.health_per_level}
-health_regen: {stats.health_regen}
-health_regen_per_level: {stats.health_regen_per_level}
-magic_resist: {stats.magic_resist}
-magic_resist_per_level: {stats.magic_resist_per_level}
-mana: {stats.mana}
-mana_per_level: {stats.mana_per_level}
-mana_regen: {stats.mana_regen}
-mana_regen_per_level: {stats.mana_regen_per_level}
-movespeed: {stats.movespeed}"""
+#         emb = discord.Embed(title = f"{champion.name}", description=f"Displaying {champion.name}'s base stats")
+#         # Weird formatting because of multiline string, dont worry about it
+#         response = f"""
+# armor: {stats.armor}
+# armor per level: {stats.armor_per_level}
+# attack_damage: {stats.attack_damage}
+# attack_damage_per_level: {stats.attack_damage_per_level}
+# attack_range: {stats.attack_range}
+# attack_speed: {stats.attack_speed}
+# percent_attack_speed_per_level: {stats.percent_attack_speed_per_level}
+# critical_strike_chance: {stats.critical_strike_chance}
+# critical_strike_chance_per_level: {stats.critical_strike_chance_per_level}
+# health: {stats.health}
+# health_per_level: {stats.health_per_level}
+# health_regen: {stats.health_regen}
+# health_regen_per_level: {stats.health_regen_per_level}
+# magic_resist: {stats.magic_resist}
+# magic_resist_per_level: {stats.magic_resist_per_level}
+# mana: {stats.mana}
+# mana_per_level: {stats.mana_per_level}
+# mana_regen: {stats.mana_regen}
+# mana_regen_per_level: {stats.mana_regen_per_level}
+# movespeed: {stats.movespeed}"""
         
-        emb.add_field(name="Stats", value=response, inline=True)
-        skins = champion.skins
-        emb.set_thumbnail(url=skins['default'].loading_image_url)
-        await ctx.send(embed=emb)
+#         emb.add_field(name="Stats", value=response, inline=True)
+#         skins = champion.skins
+#         emb.set_thumbnail(url=skins['default'].loading_image_url)
+#         await ctx.send(embed=emb)
 
-    @commands.command(name='abilities', help='Displays the abilities of the given champion')
-    async def abilities(self, ctx, *, champion_name):
+#     @commands.command(name='abilities', help='Displays the abilities of the given champion')
+#     async def abilities(self, ctx, *, champion_name):
 
-        champion = cass.get_champion(f'{champion_name}')
+#         champion = cass.get_champion(f'{champion_name}')
         
-        emb = discord.Embed(title = f"{champion.name}", description=f"Displaying {champion.name}'s abilities")
+#         emb = discord.Embed(title = f"{champion.name}", description=f"Displaying {champion.name}'s abilities")
 
-        passive = champion.passive
-        emb.add_field(name=f"Passive: {passive.name}", value=passive.description, inline=False)
+#         passive = champion.passive
+#         emb.add_field(name=f"Passive: {passive.name}", value=passive.description, inline=False)
 
-        spells = champion.spells
-        for spell in spells:
-            emb.add_field(name=f"{spell.keyboard_key}: {spell.name}", value=spell.description, inline=False)
-            emb.add_field(name=f"{spell.keyboard_key} tooltip:",value=f"{spell.tooltip}", inline=False)
-            emb.add_field(name=f"{spell.keyboard_key} effects:",value=f"{spell.effects}", inline=False)
-            print(spell.effects_by_level)
+#         spells = champion.spells
+#         for spell in spells:
+#             emb.add_field(name=f"{spell.keyboard_key}: {spell.name}", value=spell.description, inline=False)
+#             emb.add_field(name=f"{spell.keyboard_key} tooltip:",value=f"{spell.tooltip}", inline=False)
+#             emb.add_field(name=f"{spell.keyboard_key} effects:",value=f"{spell.effects}", inline=False)
+#             print(spell.effects_by_level)
 
-        skins = champion.skins
-        emb.set_thumbnail(url=skins['default'].loading_image_url)
+#         skins = champion.skins
+#         emb.set_thumbnail(url=skins['default'].loading_image_url)
         
         
-        await ctx.send(embed=emb)
+#         await ctx.send(embed=emb)
 
 
 
@@ -154,40 +156,40 @@ movespeed: {stats.movespeed}"""
 
 
 
-# This section uses the ddragon json file downloaded to the computer, will work on improving this over time
-# Otherwise just use the cass api for ease of functionality
-    @commands.command(name='ddragonstats', help='prints the stats of the given champion')
-    async def ddragonstats(self, ctx, *, champion):
-        with open(f"C:/Baka-Bot/11.11.1/data/en_US/champion/{champion}.json") as access_json:
-            file_access = json.load(access_json)
+# # This section uses the ddragon json file downloaded to the computer, will work on improving this over time
+# # Otherwise just use the cass api for ease of functionality
+#     @commands.command(name='ddragonstats', help='prints the stats of the given champion')
+#     async def ddragonstats(self, ctx, *, champion):
+#         with open(f"C:/Baka-Bot/11.11.1/data/en_US/champion/{champion}.json") as access_json:
+#             file_access = json.load(access_json)
         
-        data_access = file_access['data']
+#         data_access = file_access['data']
 
-        access_json.close() #Close the file so bad things dont happen
+#         access_json.close() #Close the file so bad things dont happen
 
-        champion_access = data_access[f'{champion}']
+#         champion_access = data_access[f'{champion}']
         
-        stats_access = champion_access['stats']
+#         stats_access = champion_access['stats']
         
-        await ctx.send(stats_access)
+#         await ctx.send(stats_access)
 
-    @commands.command(name='ddragonabilities', help='prints the abilities of the given champion')
-    async def ddragonabilities(self, ctx, *, champion):
-        with open(f"C:/Baka-Bot/11.11.1/data/en_US/champion/{champion}.json") as access_json:
-            file_access = json.load(access_json)
+#     @commands.command(name='ddragonabilities', help='prints the abilities of the given champion')
+#     async def ddragonabilities(self, ctx, *, champion):
+#         with open(f"C:/Baka-Bot/11.11.1/data/en_US/champion/{champion}.json") as access_json:
+#             file_access = json.load(access_json)
         
-        data_access = file_access['data']
+#         data_access = file_access['data']
 
-        access_json.close() #Close the file so bad things dont happen
+#         access_json.close() #Close the file so bad things dont happen
 
-        champion_access = data_access[f'{champion}']
+#         champion_access = data_access[f'{champion}']
         
-        abilities_access = champion_access['spells']
+#         abilities_access = champion_access['spells']
         
-        print(abilities_access)
+#         print(abilities_access)
 
-        for abilities in abilities_access:
-            await ctx.send(abilities)
+#         for abilities in abilities_access:
+#             await ctx.send(abilities)
 
 
 
@@ -328,8 +330,8 @@ movespeed: {stats.movespeed}"""
 
 #TEST COMMAND TO GET ABILITIES
 
-    @commands.command(name='testabilities', help='Gets information about the input champion from the League wikia')
-    async def testabilities(self, ctx, *, champion_name):
+    @commands.command(name='abilities', help='Gets the ability information of the input champion from the League wikia')
+    async def abilities(self, ctx, *, champion_name):
         #FIX CHAMPION NAME INPUT
         if " " in champion_name: #Deal with champs that have spaces in their names
             champion_list = champion_name.split(" ")
@@ -438,6 +440,87 @@ movespeed: {stats.movespeed}"""
                 ability_emb.set_thumbnail(url=f'{image_url}')
 
             await ctx.send(embed=ability_emb)
+
+
+    @commands.command(name='rank', help='returns the rank of the input summoner from u.gg')
+    async def rank(self, ctx, *, summoner_name):
+        #FIX CHAMPION NAME INPUT
+        summoner_url = summoner_name.replace(" ", "%20")
+      
+        url = f"https://u.gg/lol/profile/na1/{summoner_url}/overview"
+
+        # Use Selenium to interact with the webpage
+
+        # Use chrome
+        driver = webdriver.Chrome(r"F:/chromedriver_win32/chromedriver.exe")
+
+        # Open the website
+        driver.get(url)
+
+        # Get the update button and click it
+        update_button = driver.find_element_by_class_name("update-button")
+        update_button.click()
+
+        # get URL
+        page = requests.get(url)
+  
+        # display status code
+        print(page.status_code)
+        # If the response was successful, no Exception will be raised
+        try:
+            page.raise_for_status()
+        except HTTPError as http_err:
+            print(f'HTTP error occurred: {http_err}')  # Python 3.6
+        except Exception as err:
+            print(f'Other error occurred: {err}')  # Python 3.6
+        else:
+            print('Success!')
+
+        # scrape webpage
+        soup = BeautifulSoup(page.content, 'html.parser')
+
+        rank_divs = soup.find_all(class_="rank-tile")
+
+        rank_emb = discord.Embed()
+
+        for queue in rank_divs:
+
+            queue_type = queue.find(class_="queue-type").get_text()
+
+            rank = queue.find(class_="rank-text").get_text()
+            cleaned_rank = rank.replace("/", ": ") # Replaces the '/' with a space
+
+            if queue_type == "Ranked Solo":
+                # Get the png used for the rank icon
+                # Hosting images using ibb
+                if "Iron" in cleaned_rank:
+                    rank_icon_url ="https://i.ibb.co/K58NXGD/iron.png"
+                elif "Bronze" in cleaned_rank:
+                    rank_icon_url ="https://i.ibb.co/xjCFxWV/bronze.png"
+                elif "Silver" in cleaned_rank:
+                    rank_icon_url ="https://i.ibb.co/3R6ZbL3/silver.png"
+                elif "Gold" in cleaned_rank:
+                    rank_icon_url ="https://i.ibb.co/Mn18y7c/gold.png"
+                elif "Platinum" in cleaned_rank:
+                    rank_icon_url ="https://i.ibb.co/FXhrdYt/platinum.png"
+                elif "Diamond" in cleaned_rank:
+                    rank_icon_url ="https://i.ibb.co/HBQ5S7H/diamond.png"
+                elif "Master" in cleaned_rank:
+                    rank_icon_url ="https://i.ibb.co/Z2dx21f/master.png"
+                elif "Grandmaster" in cleaned_rank:
+                    rank_icon_url ="https://i.ibb.co/PxV2yGC/grandmaster.png"
+                elif "Challenger" in cleaned_rank:
+                    rank_icon_url ="https://i.ibb.co/C2x1vV4/challenger.png"
+
+            rank_emb.add_field(name=f"{highlight(queue_type)}", value=cleaned_rank)        
+
+        rank_emb.set_author(name=f"{summoner_name}'s Rank", icon_url=f"{rank_icon_url}")
+
+        await ctx.send(embed=rank_emb)
+
+        driver.quit() # Close the window
+            
+            
 
 # Helper functions for discord specific text formatting
 def highlight(string):

@@ -52,8 +52,8 @@ async def on_ready():
         if channel is None:
             channel = await guild.create_text_channel(f'{bot_channel}')
         # Send a message to show that the bot is online
-        if guild.name == GUILD:
-            await channel.send('Ohayo!')
+        # if guild.name == GUILD:
+        #     await channel.send('Ohayo!')  # PUT BACK LATER 
 
 # Sends a dm to any member who joins the guild
 @bot.event
